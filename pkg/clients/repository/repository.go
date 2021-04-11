@@ -55,9 +55,9 @@ func (c *Client) Create(repo *models.Repository) (*models.Repository, error) {
 		return nil, err
 	}
 
-	result := &models.Repository{}
+	result := models.Repository{}
 	u.Path = path.Join(u.Path, repositoryURI)
-	code, err := c.Handler.Post(ctx, b, u.String(), result)
+	code, err := c.Handler.Post(ctx, b, u.String(), &result)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
@@ -66,5 +66,36 @@ func (c *Client) Create(repo *models.Repository) (*models.Repository, error) {
 		c.Logger.Error().Str("url", u.String()).Int("code", code).Msg("Return code was not OK")
 		return nil, fmt.Errorf("return code was not OK %d", code)
 	}
-	return repo, nil
+	return &result, nil
+}
+
+// List repositories.
+func (c *Client) List(opts *models.ListOptions) ([]*models.Repository, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeOutInSeconds)*time.Second)
+	defer cancel()
+
+	b, err := json.Marshal(opts)
+	if err != nil {
+		c.Logger.Debug().Err(err).Msg("Failed to parse options")
+		return nil, err
+	}
+
+	u, err := url.Parse(c.Address)
+	if err != nil {
+		c.Logger.Debug().Err(err).Msg("Failed to parse address")
+		return nil, err
+	}
+
+	result := make([]*models.Repository, 0)
+	u.Path = path.Join(u.Path, repositoriesURI)
+	code, err := c.Handler.Post(ctx, b, u.String(), &result)
+	if err != nil {
+		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
+		return nil, err
+	}
+	if code > 299 || code < 200 {
+		c.Logger.Error().Str("url", u.String()).Int("code", code).Msg("Return code was not OK")
+		return nil, fmt.Errorf("return code was not OK %d", code)
+	}
+	return result, nil
 }

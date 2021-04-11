@@ -58,7 +58,6 @@ func (p *Handler) prepare(ctx context.Context, method, url string, payload io.Re
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
-
 	return response.StatusCode, nil
 }
 
@@ -76,7 +75,7 @@ func (p *Handler) Send(req *http.Request, parseTo interface{}) (*http.Response, 
 		}
 	}()
 	if parseTo != nil {
-		if err := p.parseBody(resp.Body, &parseTo); err != nil {
+		if err := p.parseBody(resp.Body, parseTo); err != nil {
 			return nil, err
 		}
 	}
