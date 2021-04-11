@@ -11,10 +11,11 @@ import (
 )
 
 // NewHandler creates a new handler with a given client.
-func NewHandler(client http.Client, log zerolog.Logger) *Handler {
+func NewHandler(client http.Client, token string, log zerolog.Logger) *Handler {
 	return &Handler{
 		Logger: log,
 		Client: client,
+		Token:  token,
 	}
 }
 
@@ -22,6 +23,7 @@ func NewHandler(client http.Client, log zerolog.Logger) *Handler {
 type Handler struct {
 	Logger zerolog.Logger
 	Client http.Client
+	Token  string
 }
 
 // Post extracts operation regarding posting actions.
@@ -50,6 +52,7 @@ func (p *Handler) prepare(ctx context.Context, method, url string, payload io.Re
 		return http.StatusInternalServerError, err
 	}
 	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", "Bearer "+p.Token)
 
 	response, err := p.Send(req, parseTo)
 	if err != nil {

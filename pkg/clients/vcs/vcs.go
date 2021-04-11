@@ -1,4 +1,4 @@
-package repository
+package vcs
 
 import (
 	"context"
@@ -18,8 +18,7 @@ import (
 
 const (
 	timeOutInSeconds = 10
-	repositoryURI    = "/rest/api/1/krok/repository"
-	repositoriesURI  = "/rest/api/1/krok/repositories"
+	vcsURI           = "/rest/api/1/krok/vcs-token"
 )
 
 // NewClient creates a new repository provider.
@@ -38,33 +37,32 @@ type Client struct {
 	Handler *clients.Handler
 }
 
-// Create creates a repository resource.
-func (c *Client) Create(repo *models.Repository) (*models.Repository, error) {
+// Create creates a vcs token.
+func (c *Client) Create(req *models.VCSToken) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeOutInSeconds)*time.Second)
 	defer cancel()
 
-	b, err := json.Marshal(repo)
+	b, err := json.Marshal(req)
 	if err != nil {
 		c.Logger.Debug().Err(err).Msg("Failed to parse repository")
-		return nil, err
+		return err
 	}
 
 	u, err := url.Parse(c.Address)
 	if err != nil {
 		c.Logger.Debug().Err(err).Msg("Failed to parse address")
-		return nil, err
+		return err
 	}
 
-	result := &models.Repository{}
-	u.Path = path.Join(u.Path, repositoryURI)
-	code, err := c.Handler.Post(ctx, b, u.String(), result)
+	u.Path = path.Join(u.Path, vcsURI)
+	code, err := c.Handler.Post(ctx, b, u.String(), nil)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
-		return nil, err
+		return err
 	}
 	if code > 299 || code < 200 {
 		c.Logger.Error().Str("url", u.String()).Int("code", code).Msg("Return code was not OK")
-		return nil, fmt.Errorf("return code was not OK %d", code)
+		return fmt.Errorf("return code was not OK %d", code)
 	}
-	return repo, nil
+	return nil
 }
