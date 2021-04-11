@@ -11,7 +11,6 @@ import (
 const (
 	// Prefix of all environment variables
 	envKeyPrefix = "KROK_"
-	serverPort   = ":9998"
 )
 
 var (
@@ -32,7 +31,6 @@ var (
 		Token     string
 		Formatter string
 		endpoint  string
-		port      string
 	}
 	// KC is the krok client with all the clients bundled together.
 	KC *pkg.KrokClient
@@ -48,12 +46,10 @@ func getEnvOrDefault(key, def string) string {
 func init() {
 	f := krokCmd.PersistentFlags()
 	// Persistent flags
-	defaultEndpoint := getEnvOrDefault("ENDPOINT", "localhost")
-	defaultPort := getEnvOrDefault("PORT", serverPort)
+	defaultEndpoint := getEnvOrDefault("ENDPOINT", "http://localhost:9998")
 	f.StringVar(&KrokArgs.Token, "token", "", "Token used to authenticate with the server")
 	f.StringVar(&KrokArgs.Formatter, "format", "table", "Format to display data in: json|table")
 	f.StringVar(&KrokArgs.endpoint, "endpoint", defaultEndpoint, "API endpoint of the Krok server")
-	f.StringVar(&KrokArgs.port, "port", defaultPort, "Port of the krok server")
 
 	// Set up the main client.
 	KC = pkg.NewKrokClient(pkg.Config{

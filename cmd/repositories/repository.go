@@ -37,7 +37,7 @@ func init() {
 	f := RepositoryCmd.PersistentFlags()
 	f.StringVar(&repoArgs.name, "name", "", "The name of the repository.")
 	f.StringVar(&repoArgs.url, "url", "", "The URL of the repository.")
-	f.StringSliceVar(&repoArgs.events, "events", []string{"push"}, "The events to subscribe to for this repository.")
+	f.StringSliceVar(&repoArgs.events, "events", []string{"push"}, "The events to subscribe to for this repository. Exp: push")
 	f.StringVar(&repoArgs.auth.secret, "secret", "", "The hook secret.")
 	f.StringVar(&repoArgs.auth.ssh, "ssh", "", "An SSH key to access the repository.")
 	f.StringVar(&repoArgs.auth.username, "username", "", "A username to access the repository")

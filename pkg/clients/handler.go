@@ -42,6 +42,7 @@ func (p *Handler) Get(ctx context.Context, url string, a interface{}) (int, erro
 	return p.prepare(ctx, "GET", url, nil, a)
 }
 
+// prepare the request. Any possible result will be put into the parseTo variable.
 func (p *Handler) prepare(ctx context.Context, method, url string, payload io.Reader, parseTo interface{}) (int, error) {
 	req, err := http.NewRequestWithContext(ctx, method, url, payload)
 	if err != nil {
