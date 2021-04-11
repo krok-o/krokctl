@@ -9,9 +9,8 @@ import (
 
 const (
 	// Prefix of all environment variables
-	envKeyPrefix  = "KROK_"
-	envKeyProgram = envKeyPrefix + "EXECUTABLE"
-	apiPortSuffix = ":9998"
+	envKeyPrefix = "KROK_"
+	serverPort   = ":9998"
 )
 
 var (
@@ -23,12 +22,14 @@ var (
 		PersistentPreRun: krokCmdPersistentPreRun,
 	}
 
+	// CLILog is the krokctl's logger.
 	CLILog = zerolog.New(zerolog.ConsoleWriter{
 		Out: os.Stderr,
 	}).With().Timestamp().Logger()
 	krokArgs struct {
 		Token    string
 		endpoint string
+		port     string
 	}
 )
 
@@ -43,13 +44,17 @@ func init() {
 	f := krokCmd.PersistentFlags()
 	// Persistent flags
 	defaultEndpoint := getEnvOrDefault("ENDPOINT", "localhost")
+	defaultPort := getEnvOrDefault("PORT", serverPort)
 	f.StringVar(&krokArgs.Token, "token", "", "Token used to authenticate with the server")
 	f.StringVar(&krokArgs.endpoint, "endpoint", defaultEndpoint, "API endpoint of the Krok server")
+	f.StringVar(&krokArgs.port, "port", defaultPort, "Port of the krok server")
+
+	// Set up the main client.
 }
 
 // ShowUsage shows usage of the given command on stdout.
 func ShowUsage(cmd *cobra.Command, args []string) {
-	cmd.Usage()
+	_ = cmd.Usage()
 }
 
 // Execute runs the main krok command.
