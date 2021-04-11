@@ -12,5 +12,5 @@ func FormatRepository(repo *models.Repository, opt string) string {
 		{"url", repo.URL},
 	}
 	formatter := NewFormatter(opt)
-	return formatter.Format(d...)
+	return formatter.FormatObject(d)
 }
