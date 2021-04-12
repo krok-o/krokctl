@@ -31,7 +31,7 @@ func (j *JSONFormatter) FormatObject(data []kv) string {
 	}
 	encoded, err := json.MarshalIndent(m, "", "  ")
 	if err != nil {
-		cmd.CLILog.Error().Msg("Failed to marshal map.")
+		cmd.CLILog.Error().Err(err).Msg("Failed to marshal map.")
 		return ""
 	}
 	return string(encoded)
@@ -49,7 +49,7 @@ func (j *JSONFormatter) FormatList(data [][]kv) string {
 	}
 	encoded, err := json.MarshalIndent(l, "", "  ")
 	if err != nil {
-		cmd.CLILog.Error().Msg("Failed to marshal map.")
+		cmd.CLILog.Error().Err(err).Msg("Failed to marshal map.")
 		return ""
 	}
 	return string(encoded)
