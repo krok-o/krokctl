@@ -64,5 +64,5 @@ func runRepositoryCmd(c *cobra.Command, args []string) {
 		cmd.CLILog.Fatal().Err(err).Msg("Failed to create repository.")
 	}
 
-	fmt.Println(formatter.FormatRepository(repo, cmd.KrokArgs.Formatter))
+	fmt.Print(formatter.FormatRepository(repo, cmd.KrokArgs.Formatter))
 }

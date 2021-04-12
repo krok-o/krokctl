@@ -40,5 +40,5 @@ func runListRepositoryCmd(c *cobra.Command, args []string) {
 	if err != nil {
 		cmd.CLILog.Fatal().Err(err).Msg("Failed to list repository.")
 	}
-	fmt.Println(formatter.FormatRepositories(repos, cmd.KrokArgs.Formatter))
+	fmt.Print(formatter.FormatRepositories(repos, cmd.KrokArgs.Formatter))
 }

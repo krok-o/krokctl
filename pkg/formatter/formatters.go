@@ -37,12 +37,13 @@ func (j *JSONFormatter) FormatObject(data []kv) string {
 
 // FormatList formats a list of key value objects as JSON.
 func (j *JSONFormatter) FormatList(data [][]kv) string {
-	l := make(map[string]interface{}, len(data))
-	for _, kvs := range data {
+	l := make([]map[string]interface{}, len(data))
+	for i, kvs := range data {
 		m := make(map[string]interface{})
 		for _, kv := range kvs {
 			m[kv.Key] = kv.Value
 		}
+		l[i] = m
 	}
 	encoded, err := json.MarshalIndent(l, "", "  ")
 	if err != nil {
@@ -68,6 +69,19 @@ func (t *TableFormatter) FormatObject(data []kv) string {
 	buf := &bytes.Buffer{}
 	table := tablewriter.NewWriter(buf)
 	table.SetHeader(header)
+	table.SetBorder(false)
+	table.SetAutoWrapText(false)
+	table.SetAutoFormatHeaders(true)
+	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetCenterSeparator("")
+	table.SetColumnSeparator("")
+	table.SetRowSeparator("")
+	table.SetHeaderLine(false)
+	table.SetBorder(false)
+	table.SetTablePadding("\t") // pad with tabs
+	table.SetNoWhiteSpace(true)
+	table.Render()
 
 	for _, v := range d {
 		table.Append(v)
@@ -100,6 +114,18 @@ func (t *TableFormatter) FormatList(data [][]kv) string {
 	buf := &bytes.Buffer{}
 	table := tablewriter.NewWriter(buf)
 	table.SetHeader(header)
+	table.SetBorder(false)
+	table.SetAutoWrapText(false)
+	table.SetAutoFormatHeaders(true)
+	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetCenterSeparator("")
+	table.SetColumnSeparator("")
+	table.SetRowSeparator("")
+	table.SetHeaderLine(false)
+	table.SetBorder(false)
+	table.SetTablePadding("\t") // pad with tabs
+	table.SetNoWhiteSpace(true)
 
 	for _, v := range d {
 		table.Append(v)
