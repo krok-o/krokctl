@@ -84,8 +84,6 @@ func (t *TableFormatter) FormatObject(data []kv) string {
 	table.SetBorder(false)
 	table.SetTablePadding("\t") // pad with tabs
 	table.SetNoWhiteSpace(true)
-	table.Render()
-
 	for _, v := range d {
 		table.Append(v)
 	}

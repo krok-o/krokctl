@@ -70,6 +70,37 @@ func (c *Client) Create(repo *models.Repository) (*models.Repository, error) {
 	return &result, nil
 }
 
+// Update updates a repository resource.
+func (c *Client) Update(repo *models.Repository) (*models.Repository, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeOutInSeconds)*time.Second)
+	defer cancel()
+
+	b, err := json.Marshal(repo)
+	if err != nil {
+		c.Logger.Debug().Err(err).Msg("Failed to parse repository")
+		return nil, err
+	}
+
+	u, err := url.Parse(c.Address)
+	if err != nil {
+		c.Logger.Debug().Err(err).Msg("Failed to parse address")
+		return nil, err
+	}
+
+	result := models.Repository{}
+	u.Path = path.Join(u.Path, repositoryURI, "update")
+	code, err := c.Handler.Post(ctx, b, u.String(), &result)
+	if err != nil {
+		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
+		return nil, err
+	}
+	if code > 299 || code < 200 {
+		c.Logger.Error().Str("url", u.String()).Int("code", code).Msg("Return code was not OK")
+		return nil, fmt.Errorf("return code was not OK %d", code)
+	}
+	return &result, nil
+}
+
 // Delete deletes a repository resource.
 func (c *Client) Delete(id int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeOutInSeconds)*time.Second)
@@ -122,4 +153,29 @@ func (c *Client) List(opts *models.ListOptions) ([]*models.Repository, error) {
 		return nil, fmt.Errorf("return code was not OK %d", code)
 	}
 	return result, nil
+}
+
+// Get returns a repository resource.
+func (c *Client) Get(id int) (*models.Repository, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeOutInSeconds)*time.Second)
+	defer cancel()
+
+	u, err := url.Parse(c.Address)
+	if err != nil {
+		c.Logger.Debug().Err(err).Msg("Failed to parse address")
+		return nil, err
+	}
+
+	result := models.Repository{}
+	u.Path = path.Join(u.Path, repositoryURI, strconv.Itoa(id))
+	code, err := c.Handler.Get(ctx, u.String(), &result)
+	if err != nil {
+		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
+		return nil, err
+	}
+	if code > 299 || code < 200 {
+		c.Logger.Error().Str("url", u.String()).Int("code", code).Msg("Return code was not OK")
+		return nil, fmt.Errorf("return code was not OK %d", code)
+	}
+	return &result, nil
 }

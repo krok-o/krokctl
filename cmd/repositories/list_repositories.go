@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	// ListRepositoriesCmd lists all repositories.
+	// GetRepositoriesCmd lists all repositories.
 	ListRepositoriesCmd = &cobra.Command{
 		Use:   "repositories",
 		Short: "List repositories",

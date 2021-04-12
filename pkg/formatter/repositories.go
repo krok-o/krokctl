@@ -2,6 +2,7 @@ package formatter
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/krok-o/krok/pkg/models"
 )
@@ -9,10 +10,17 @@ import (
 // FormatRepository formats a repository and displays it with the request
 // format option.
 func FormatRepository(repo *models.Repository, opt string) string {
+	listOfCommandNames := make([]string, 0)
+	for _, c := range repo.Commands {
+		listOfCommandNames = append(listOfCommandNames, c.Name)
+	}
 	d := []kv{
 		{"id", strconv.Itoa(repo.ID)},
 		{"name", repo.Name},
 		{"url", repo.URL},
+		{"vcs", strconv.Itoa(repo.VCS)},
+		{"callback-url", repo.UniqueURL},
+		{"attached-commands", strings.Join(listOfCommandNames, ",")},
 	}
 	formatter := NewFormatter(opt)
 	return formatter.FormatObject(d)
@@ -26,6 +34,8 @@ func FormatRepositories(repos []*models.Repository, opt string) string {
 		data := []kv{
 			{"id", strconv.Itoa(r.ID)},
 			{"name", r.Name},
+			{"url", r.URL},
+			{"vcs", strconv.Itoa(r.VCS)},
 		}
 		d = append(d, data)
 	}
