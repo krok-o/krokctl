@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 
+	"github.com/krok-o/krokctl/cmd"
 	"github.com/olekukonko/tablewriter"
 )
 
@@ -30,7 +31,8 @@ func (j *JSONFormatter) FormatObject(data []kv) string {
 	}
 	encoded, err := json.MarshalIndent(m, "", "  ")
 	if err != nil {
-		panic(err)
+		cmd.CLILog.Error().Msg("Failed to marshal map.")
+		return ""
 	}
 	return string(encoded)
 }
@@ -47,7 +49,8 @@ func (j *JSONFormatter) FormatList(data [][]kv) string {
 	}
 	encoded, err := json.MarshalIndent(l, "", "  ")
 	if err != nil {
-		panic(err)
+		cmd.CLILog.Error().Msg("Failed to marshal map.")
+		return ""
 	}
 	return string(encoded)
 }
