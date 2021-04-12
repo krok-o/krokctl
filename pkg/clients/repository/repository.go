@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"strconv"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -67,6 +68,29 @@ func (c *Client) Create(repo *models.Repository) (*models.Repository, error) {
 		return nil, fmt.Errorf("return code was not OK %d", code)
 	}
 	return &result, nil
+}
+
+// Delete deletes a repository resource.
+func (c *Client) Delete(id int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeOutInSeconds)*time.Second)
+	defer cancel()
+
+	u, err := url.Parse(c.Address)
+	if err != nil {
+		c.Logger.Debug().Err(err).Msg("Failed to parse address")
+		return err
+	}
+	u.Path = path.Join(u.Path, repositoryURI, strconv.Itoa(id))
+	code, err := c.Handler.Delete(ctx, u.String())
+	if err != nil {
+		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
+		return err
+	}
+	if code > 299 || code < 200 {
+		c.Logger.Error().Str("url", u.String()).Int("code", code).Msg("Return code was not OK")
+		return fmt.Errorf("return code was not OK %d", code)
+	}
+	return nil
 }
 
 // List repositories.

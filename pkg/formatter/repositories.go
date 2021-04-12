@@ -1,6 +1,8 @@
 package formatter
 
 import (
+	"strconv"
+
 	"github.com/krok-o/krok/pkg/models"
 )
 
@@ -8,6 +10,7 @@ import (
 // format option.
 func FormatRepository(repo *models.Repository, opt string) string {
 	d := []kv{
+		{"id", strconv.Itoa(repo.ID)},
 		{"name", repo.Name},
 		{"url", repo.URL},
 	}
@@ -21,6 +24,7 @@ func FormatRepositories(repos []*models.Repository, opt string) string {
 	d := [][]kv{}
 	for _, r := range repos {
 		data := []kv{
+			{"id", strconv.Itoa(r.ID)},
 			{"name", r.Name},
 		}
 		d = append(d, data)
