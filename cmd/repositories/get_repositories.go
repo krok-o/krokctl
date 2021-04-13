@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	// GetRepositoriesCmd lists all repositories.
+	// GetRepositoriesCmd get a repository.
 	GetRepositoriesCmd = &cobra.Command{
 		Use:   "repository",
 		Short: "Get repository",
@@ -31,7 +31,7 @@ func init() {
 func runGetRepositoryCmd(c *cobra.Command, args []string) {
 	repo, err := cmd.KC.RepositoryClient.Get(getRepoArgs.id)
 	if err != nil {
-		cmd.CLILog.Fatal().Err(err).Msg("Failed to list repository.")
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to get repository.")
 	}
 	fmt.Print(formatter.FormatRepository(repo, cmd.KrokArgs.Formatter))
 }
