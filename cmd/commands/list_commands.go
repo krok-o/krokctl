@@ -13,7 +13,7 @@ import (
 var (
 	// ListCommandsCmd lists all commands.
 	ListCommandsCmd = &cobra.Command{
-		Use:   "repositories",
+		Use:   "commands",
 		Short: "List repositories",
 		Run:   runListRepositoryCmd,
 	}
