@@ -52,7 +52,9 @@ func (p *Handler) prepare(ctx context.Context, method, url string, payload io.Re
 		return http.StatusInternalServerError, err
 	}
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", "Bearer "+p.Token)
+	if p.Token != "" {
+		req.Header.Add("Authorization", "Bearer "+p.Token)
+	}
 
 	response, err := p.Send(req, parseTo)
 	if err != nil {

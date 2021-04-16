@@ -60,8 +60,9 @@ type TableFormatter struct{}
 
 // FormatObject formats a key value list as Table.
 func (t *TableFormatter) FormatObject(data []kv) string {
-	row := make([]string, 0)
-	header := make([]string, 0)
+	var (
+		row, header []string
+	)
 	for _, v := range data {
 		header = append(header, v.Key)
 		row = append(row, v.Value)
@@ -98,15 +99,15 @@ func (t *TableFormatter) FormatList(data [][]kv) string {
 	}
 
 	// Gather the headers
-	header := make([]string, 0)
+	var header []string
 	for _, v := range data[0] {
 		header = append(header, v.Key)
 	}
 
 	// Gather the rows
-	d := [][]string{}
+	var d [][]string
 	for _, kvs := range data {
-		row := make([]string, 0)
+		var row []string
 		for _, v := range kvs {
 			row = append(row, v.Value)
 		}

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/krok-o/krokctl/pkg/clients/command"
+	"github.com/krok-o/krokctl/pkg/clients/platform"
 	"github.com/rs/zerolog"
 
 	"github.com/krok-o/krokctl/pkg/clients/repository"
@@ -21,6 +22,7 @@ type KrokClient struct {
 	RepositoryClient *repository.Client
 	CommandClient    *command.Client
 	VcsClient        *vcs.Client
+	PlatformClient   *platform.Client
 	Token            string
 }
 
@@ -29,10 +31,12 @@ func NewKrokClient(cfg Config, log zerolog.Logger) *KrokClient {
 	repoClient := repository.NewClient(cfg.Address, &http.Client{}, cfg.Token, log)
 	commandClient := command.NewClient(cfg.Address, &http.Client{}, cfg.Token, log)
 	vcsClient := vcs.NewClient(cfg.Address, &http.Client{}, cfg.Token, log)
+	platformClient := platform.NewClient(cfg.Address, &http.Client{}, "", log)
 	return &KrokClient{
 		RepositoryClient: repoClient,
 		VcsClient:        vcsClient,
 		CommandClient:    commandClient,
+		PlatformClient:   platformClient,
 		Token:            cfg.Token,
 	}
 }

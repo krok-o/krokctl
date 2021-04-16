@@ -10,7 +10,7 @@ import (
 // FormatRepository formats a repository and displays it with the request
 // format option.
 func FormatRepository(repo *models.Repository, opt string) string {
-	listOfCommandNames := make([]string, 0)
+	var listOfCommandNames []string
 	for _, c := range repo.Commands {
 		listOfCommandNames = append(listOfCommandNames, c.Name)
 	}
@@ -29,7 +29,7 @@ func FormatRepository(repo *models.Repository, opt string) string {
 // FormatRepositories formats a list of repositories and displays it with the requested
 // format option.
 func FormatRepositories(repos []*models.Repository, opt string) string {
-	d := [][]kv{}
+	var d [][]kv
 	for _, r := range repos {
 		data := []kv{
 			{"id", strconv.Itoa(r.ID)},

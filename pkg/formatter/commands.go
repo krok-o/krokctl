@@ -10,7 +10,7 @@ import (
 // FormatCommand formats a command and displays it with the request
 // format option.
 func FormatCommand(command *models.Command, opt string) string {
-	listOfRepoNames := make([]string, 0)
+	var listOfRepoNames []string
 	for _, r := range command.Repositories {
 		listOfRepoNames = append(listOfRepoNames, r.Name)
 	}
@@ -31,7 +31,7 @@ func FormatCommand(command *models.Command, opt string) string {
 // FormatCommands formats a list of commands and displays it with the requested
 // format option.
 func FormatCommands(commands []*models.Command, opt string) string {
-	d := [][]kv{}
+	var d [][]kv
 	for _, command := range commands {
 		data := []kv{
 			{"id", strconv.FormatInt(int64(command.ID), 10)},

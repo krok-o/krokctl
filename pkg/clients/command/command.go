@@ -110,7 +110,7 @@ func (c *Client) List(opts *models.ListOptions) ([]*models.Command, error) {
 		return nil, err
 	}
 
-	result := make([]*models.Command, 0)
+	var result []*models.Command
 	u.Path = path.Join(u.Path, commandsURI)
 	code, err := c.Handler.Post(ctx, b, u.String(), &result)
 	if err != nil {

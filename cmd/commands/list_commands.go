@@ -14,8 +14,8 @@ var (
 	// ListCommandsCmd lists all commands.
 	ListCommandsCmd = &cobra.Command{
 		Use:   "commands",
-		Short: "List repositories",
-		Run:   runListRepositoryCmd,
+		Short: "List commands",
+		Run:   runListCommandsCmd,
 	}
 	listCommandArgs struct {
 		name string
@@ -26,10 +26,10 @@ func init() {
 	cmd.ListCmd.AddCommand(ListCommandsCmd)
 
 	f := ListCommandsCmd.PersistentFlags()
-	f.StringVar(&listCommandArgs.name, "name", "", "List repositories with names that contain this name.")
+	f.StringVar(&listCommandArgs.name, "name", "", "List commands with names that contain this name.")
 }
 
-func runListRepositoryCmd(c *cobra.Command, args []string) {
+func runListCommandsCmd(c *cobra.Command, args []string) {
 	opts := &models.ListOptions{
 		Name: listCommandArgs.name,
 	}
