@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	// ListSettingCmd creates a setting with the given values.
+	// CreateSettingCmd creates a setting with the given values.
 	CreateSettingCmd = &cobra.Command{
 		Use:   "setting",
 		Short: "Create setting",

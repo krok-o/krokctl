@@ -6,6 +6,20 @@ import (
 	"github.com/krok-o/krok/pkg/models"
 )
 
+// FormatSetting formats a setting and displays it with the request
+// format option.
+func FormatSetting(setting *models.CommandSetting, opt string) string {
+	d := []kv{
+		{"id", strconv.Itoa(setting.ID)},
+		{"command-id", strconv.Itoa(setting.CommandID)},
+		{"key", setting.Key},
+		{"value", setting.Value},
+		{"in-vault", strconv.FormatBool(setting.InVault)},
+	}
+	formatter := NewFormatter(opt)
+	return formatter.FormatObject(d)
+}
+
 // FormatSettings formats a list of settings and displays it with the request
 // format option.
 func FormatSettings(settings []*models.CommandSetting, opt string) string {

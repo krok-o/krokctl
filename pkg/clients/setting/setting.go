@@ -92,3 +92,28 @@ func (c *Client) List(id int) ([]*models.CommandSetting, error) {
 	}
 	return result, nil
 }
+
+// Get returns a setting resource.
+func (c *Client) Get(id int) (*models.CommandSetting, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeOutInSeconds)*time.Second)
+	defer cancel()
+
+	u, err := url.Parse(c.Address)
+	if err != nil {
+		c.Logger.Debug().Err(err).Msg("Failed to parse address")
+		return nil, err
+	}
+
+	result := models.CommandSetting{}
+	u.Path = path.Join(u.Path, settingURI, strconv.Itoa(id))
+	code, err := c.Handler.MakeRequest(ctx, http.MethodGet, nil, u.String(), &result)
+	if err != nil {
+		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
+		return nil, err
+	}
+	if code > 299 || code < 200 {
+		c.Logger.Error().Str("url", u.String()).Int("code", code).Msg("Return code was not OK")
+		return nil, fmt.Errorf("return code was not OK %d", code)
+	}
+	return &result, nil
+}
