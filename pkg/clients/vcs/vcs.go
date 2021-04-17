@@ -55,7 +55,7 @@ func (c *Client) Create(req *models.VCSToken) error {
 	}
 
 	u.Path = path.Join(u.Path, vcsURI)
-	code, err := c.Handler.Post(ctx, b, u.String(), nil)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, b, u.String(), nil)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return err

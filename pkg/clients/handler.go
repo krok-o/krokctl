@@ -26,22 +26,13 @@ type Handler struct {
 	Token  string
 }
 
-// Post extracts operation regarding posting actions.
-func (p *Handler) Post(ctx context.Context, data []byte, url string, a interface{}) (int, error) {
-	// Create the request
+// MakeRequest sends a request to the designated URL.
+// @data - optional data to send along if it is a POST request.
+// @url - defines the destination.
+// @output - optional output if the body contains a request to parse.
+func (p *Handler) MakeRequest(ctx context.Context, method string, data []byte, url string, output interface{}) (int, error) {
 	payload := bytes.NewReader(data)
-	return p.prepare(ctx, "POST", url, payload, a)
-
-}
-
-// Delete extracts operation regarding delete actions.
-func (p *Handler) Delete(ctx context.Context, url string) (int, error) {
-	return p.prepare(ctx, "DELETE", url, nil, nil)
-}
-
-// Get extracts operation regarding get actions.
-func (p *Handler) Get(ctx context.Context, url string, a interface{}) (int, error) {
-	return p.prepare(ctx, "GET", url, nil, a)
+	return p.prepare(ctx, method, url, payload, output)
 }
 
 // prepare the request. Any possible result will be put into the parseTo variable.

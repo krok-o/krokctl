@@ -58,7 +58,7 @@ func (c *Client) Create(repo *models.Repository) (*models.Repository, error) {
 
 	result := models.Repository{}
 	u.Path = path.Join(u.Path, repositoryURI)
-	code, err := c.Handler.Post(ctx, b, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, b, u.String(), &result)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
@@ -89,7 +89,7 @@ func (c *Client) Update(repo *models.Repository) (*models.Repository, error) {
 
 	result := models.Repository{}
 	u.Path = path.Join(u.Path, repositoryURI, "update")
-	code, err := c.Handler.Post(ctx, b, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, b, u.String(), &result)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
@@ -112,7 +112,7 @@ func (c *Client) Delete(id int) error {
 		return err
 	}
 	u.Path = path.Join(u.Path, repositoryURI, strconv.Itoa(id))
-	code, err := c.Handler.Delete(ctx, u.String())
+	code, err := c.Handler.MakeRequest(ctx, http.MethodDelete, nil, u.String(), nil)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return err
@@ -143,7 +143,7 @@ func (c *Client) List(opts *models.ListOptions) ([]*models.Repository, error) {
 
 	var result []*models.Repository
 	u.Path = path.Join(u.Path, repositoriesURI)
-	code, err := c.Handler.Post(ctx, b, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, b, u.String(), &result)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
@@ -168,7 +168,7 @@ func (c *Client) Get(id int) (*models.Repository, error) {
 
 	result := models.Repository{}
 	u.Path = path.Join(u.Path, repositoryURI, strconv.Itoa(id))
-	code, err := c.Handler.Get(ctx, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodGet, nil, u.String(), &result)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err

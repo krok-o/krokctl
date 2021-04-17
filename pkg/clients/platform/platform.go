@@ -48,7 +48,7 @@ func (c *Client) List() ([]models.Platform, error) {
 
 	var result []models.Platform
 	u.Path = path.Join(u.Path, platformURI)
-	code, err := c.Handler.Get(ctx, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodGet, nil, u.String(), &result)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err

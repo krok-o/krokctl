@@ -58,7 +58,7 @@ func (c *Client) Update(repo *models.Command) (*models.Command, error) {
 
 	result := models.Command{}
 	u.Path = path.Join(u.Path, commandURI, "update")
-	code, err := c.Handler.Post(ctx, b, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, b, u.String(), &result)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
@@ -81,7 +81,7 @@ func (c *Client) Delete(id int) error {
 		return err
 	}
 	u.Path = path.Join(u.Path, commandURI, strconv.Itoa(id))
-	code, err := c.Handler.Delete(ctx, u.String())
+	code, err := c.Handler.MakeRequest(ctx, http.MethodDelete, nil, u.String(), nil)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return err
@@ -112,7 +112,7 @@ func (c *Client) List(opts *models.ListOptions) ([]*models.Command, error) {
 
 	var result []*models.Command
 	u.Path = path.Join(u.Path, commandsURI)
-	code, err := c.Handler.Post(ctx, b, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, b, u.String(), &result)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
@@ -137,7 +137,7 @@ func (c *Client) Get(id int) (*models.Command, error) {
 
 	result := models.Command{}
 	u.Path = path.Join(u.Path, commandURI, strconv.Itoa(id))
-	code, err := c.Handler.Get(ctx, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodGet, nil, u.String(), &result)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
@@ -161,7 +161,7 @@ func (c *Client) AddRelationshipToRepository(commandID int, repositoryID int) er
 	}
 
 	u.Path = path.Join(u.Path, commandURI, "add-command-rel-for-repository", strconv.Itoa(commandID), strconv.Itoa(repositoryID))
-	code, err := c.Handler.Post(ctx, nil, u.String(), nil)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, nil, u.String(), nil)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return fmt.Errorf("failed to call POST handler: %w", err)
@@ -185,7 +185,7 @@ func (c *Client) RemoveRelationshipToRepository(commandID int, repositoryID int)
 	}
 
 	u.Path = path.Join(u.Path, commandURI, "remove-command-rel-for-repository", strconv.Itoa(commandID), strconv.Itoa(repositoryID))
-	code, err := c.Handler.Post(ctx, nil, u.String(), nil)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, nil, u.String(), nil)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return fmt.Errorf("failed to call POST handler: %w", err)
@@ -209,7 +209,7 @@ func (c *Client) RemoveRelationshipToPlatform(commandID int, platformID int) err
 	}
 
 	u.Path = path.Join(u.Path, commandURI, "remove-command-rel-for-platform", strconv.Itoa(commandID), strconv.Itoa(platformID))
-	code, err := c.Handler.Post(ctx, nil, u.String(), nil)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, nil, u.String(), nil)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return fmt.Errorf("failed to call POST handler: %w", err)
@@ -233,7 +233,7 @@ func (c *Client) AddRelationshipToPlatform(commandID int, platformID int) error 
 	}
 
 	u.Path = path.Join(u.Path, commandURI, "add-command-rel-for-platform", strconv.Itoa(commandID), strconv.Itoa(platformID))
-	code, err := c.Handler.Post(ctx, nil, u.String(), nil)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, nil, u.String(), nil)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return fmt.Errorf("failed to call POST handler: %w", err)

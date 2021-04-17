@@ -56,7 +56,7 @@ func (c *Client) Create(setting *models.CommandSetting) error {
 	}
 
 	u.Path = path.Join(u.Path, settingURI)
-	code, err := c.Handler.Post(ctx, b, u.String(), nil)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodGet, b, u.String(), nil)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return err
@@ -81,7 +81,7 @@ func (c *Client) List(id int) ([]*models.CommandSetting, error) {
 
 	var result []*models.CommandSetting
 	u.Path = path.Join(u.Path, settingsURI, strconv.Itoa(id), "settings")
-	code, err := c.Handler.Post(ctx, nil, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, nil, u.String(), &result)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
