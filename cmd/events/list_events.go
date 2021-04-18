@@ -2,6 +2,7 @@ package events
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/krok-o/krok/pkg/models"
 	"github.com/spf13/cobra"
@@ -35,9 +36,29 @@ func init() {
 }
 
 func runListEventCmd(c *cobra.Command, args []string) {
+	var (
+		fromDate *time.Time
+		toDate   *time.Time
+	)
+	if listEventsArgs.startDate != "" {
+		fd, err := cmd.ParseTime(listEventsArgs.startDate)
+		if err != nil {
+			cmd.CLILog.Fatal().Err(err).Msg("Failed to parse from date.")
+		}
+		fromDate = &fd
+	}
+	if listEventsArgs.endDate != "" {
+		ed, err := cmd.ParseTime(listEventsArgs.endDate)
+		if err != nil {
+			cmd.CLILog.Fatal().Err(err).Msg("Failed to parse end date.")
+		}
+		toDate = &ed
+	}
 	opts := &models.ListOptions{
-		PageSize: listEventsArgs.pageSize,
-		Page:     listEventsArgs.page,
+		PageSize:     listEventsArgs.pageSize,
+		Page:         listEventsArgs.page,
+		StartingDate: fromDate,
+		EndDate:      toDate,
 	}
 	repos, err := cmd.KC.EventClient.List(listEventsArgs.repoID, opts)
 	if err != nil {
