@@ -12,7 +12,7 @@ import (
 var (
 	// GetSettingCmd get a setting.
 	GetSettingCmd = &cobra.Command{
-		Use:   "settomg",
+		Use:   "setting",
 		Short: "Get setting",
 		Run:   runGetSettingCmd,
 	}
