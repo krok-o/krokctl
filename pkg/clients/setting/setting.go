@@ -20,6 +20,7 @@ const (
 	timeOutInSeconds = 10
 	settingURI       = "/rest/api/1/krok/command/setting"
 	settingsURI      = "/rest/api/1/krok/command/settings"
+	listURI          = "/rest/api/1/krok/command"
 )
 
 // NewClient creates a new settings provider.
@@ -110,7 +111,7 @@ func (c *Client) List(id int) ([]*models.CommandSetting, error) {
 	}
 
 	var result []*models.CommandSetting
-	u.Path = path.Join(u.Path, settingsURI, strconv.Itoa(id), "settings")
+	u.Path = path.Join(u.Path, listURI, strconv.Itoa(id), "settings")
 	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, nil, u.String(), &result)
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
