@@ -1,7 +1,8 @@
 package formatter
 
 import (
-	"strconv"
+	"fmt"
+	"strings"
 
 	"github.com/krok-o/krok/pkg/models"
 )
@@ -9,14 +10,18 @@ import (
 // FormatEvent formats a event and displays it with the request
 // format option.
 func FormatEvent(event *models.Event, opt string) string {
+	var commandRuns []string
+	for _, c := range event.CommandRuns {
+		commandRuns = append(commandRuns, fmt.Sprintf("%d; %s; %s", c.ID, c.CommandName, c.Status))
+	}
 	d := []kv{
-		{"id", strconv.Itoa(event.ID)},
+		{"id", event.ID},
 		{"event-id", event.EventID},
-		{"repository-id", strconv.Itoa(event.RepositoryID)},
-		{"vcs", strconv.Itoa(event.VCS)},
+		{"repository-id", event.RepositoryID},
+		{"vcs", event.VCS},
 		{"payload", event.Payload},
 		{"created-at", event.CreateAt.String()},
-		//{"command-runs", event.CommandRuns},// TODO: Figure out how to display command runs.
+		{"command-runs", strings.Join(commandRuns, "|")},
 	}
 	formatter := NewFormatter(opt)
 	return formatter.FormatObject(d)
@@ -27,13 +32,17 @@ func FormatEvent(event *models.Event, opt string) string {
 func FormatEvents(events []*models.Event, opt string) string {
 	var d [][]kv
 	for _, event := range events {
+		var commandRuns []string
+		for _, c := range event.CommandRuns {
+			commandRuns = append(commandRuns, fmt.Sprintf("%d; %s; %s", c.ID, c.CommandName, c.Status))
+		}
 		data := []kv{
-			{"id", strconv.Itoa(event.ID)},
+			{"id", event.ID},
 			{"event-id", event.EventID},
-			{"repository-id", strconv.Itoa(event.RepositoryID)},
-			{"vcs", strconv.Itoa(event.VCS)},
+			{"repository-id", event.RepositoryID},
+			{"vcs", event.VCS},
 			{"created-at", event.CreateAt.String()},
-			// TODO: Add command run IDs so they can be looked up.
+			{"command-runs", strings.Join(commandRuns, "|")},
 		}
 		d = append(d, data)
 	}

@@ -3,6 +3,7 @@ package formatter
 import (
 	"bytes"
 	"encoding/json"
+	"strconv"
 
 	"github.com/krok-o/krokctl/cmd"
 	"github.com/olekukonko/tablewriter"
@@ -10,7 +11,7 @@ import (
 
 type kv struct {
 	Key   string
-	Value string
+	Value interface{}
 }
 
 // Formatter defines a formatter for the returned data.
@@ -65,7 +66,7 @@ func (t *TableFormatter) FormatObject(data []kv) string {
 	)
 	for _, v := range data {
 		header = append(header, v.Key)
-		row = append(row, v.Value)
+		row = append(row, convertToString(v.Value))
 	}
 	d := [][]string{
 		row,
@@ -109,7 +110,7 @@ func (t *TableFormatter) FormatList(data [][]kv) string {
 	for _, kvs := range data {
 		var row []string
 		for _, v := range kvs {
-			row = append(row, v.Value)
+			row = append(row, convertToString(v.Value))
 		}
 		d = append(d, row)
 	}
@@ -134,6 +135,20 @@ func (t *TableFormatter) FormatList(data [][]kv) string {
 	}
 	table.Render()
 	return buf.String()
+}
+
+// convertToString converts a value to string. Mostly this will be either an int or a string.
+// In the future, I'm going to allow slices and format them as sub tables.
+func convertToString(value interface{}) string {
+	switch v := value.(type) {
+	case string:
+		return v
+	case int:
+		return strconv.Itoa(v)
+	default:
+		cmd.CLILog.Fatal().Interface("value", v).Msg("Unknown formatting type.")
+	}
+	return ""
 }
 
 // NewFormatter creates a formatter based on a set argument.

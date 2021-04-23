@@ -10,8 +10,8 @@ import (
 // format option.
 func FormatSetting(setting *models.CommandSetting, opt string) string {
 	d := []kv{
-		{"id", strconv.Itoa(setting.ID)},
-		{"command-id", strconv.Itoa(setting.CommandID)},
+		{"id", setting.ID},
+		{"command-id", setting.CommandID},
 		{"key", setting.Key},
 		{"value", setting.Value},
 		{"in-vault", strconv.FormatBool(setting.InVault)},
@@ -26,8 +26,8 @@ func FormatSettings(settings []*models.CommandSetting, opt string) string {
 	var d [][]kv
 	for _, setting := range settings {
 		data := []kv{
-			{"id", strconv.Itoa(setting.ID)},
-			{"command-id", strconv.Itoa(setting.CommandID)},
+			{"id", setting.ID},
+			{"command-id", setting.CommandID},
 			{"key", setting.Key},
 			{"value", setting.Value},
 			{"in-vault", strconv.FormatBool(setting.InVault)},

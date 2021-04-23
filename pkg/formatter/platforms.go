@@ -1,8 +1,6 @@
 package formatter
 
 import (
-	"strconv"
-
 	"github.com/krok-o/krok/pkg/models"
 )
 
@@ -12,7 +10,7 @@ func FormatPlatforms(platforms []models.Platform, opt string) string {
 	var d [][]kv
 	for _, platform := range platforms {
 		data := []kv{
-			{"id", strconv.FormatInt(int64(platform.ID), 10)},
+			{"id", platform.ID},
 			{"name", platform.Name},
 		}
 		d = append(d, data)

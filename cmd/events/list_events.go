@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/krok-o/krok/pkg/models"
 	"github.com/spf13/cobra"
+
+	"github.com/krok-o/krok/pkg/models"
 
 	"github.com/krok-o/krokctl/cmd"
 	"github.com/krok-o/krokctl/pkg/formatter"

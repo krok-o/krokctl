@@ -15,7 +15,7 @@ func FormatCommand(command *models.Command, opt string) string {
 		listOfRepoNames = append(listOfRepoNames, r.Name)
 	}
 	d := []kv{
-		{"id", strconv.FormatInt(int64(command.ID), 10)},
+		{"id", command.ID},
 		{"name", command.Name},
 		{"hash", command.Hash},
 		{"location", command.Location},
@@ -34,7 +34,7 @@ func FormatCommands(commands []*models.Command, opt string) string {
 	var d [][]kv
 	for _, command := range commands {
 		data := []kv{
-			{"id", strconv.FormatInt(int64(command.ID), 10)},
+			{"id", command.ID},
 			{"name", command.Name},
 			{"hash", command.Hash},
 			{"location", command.Location},
