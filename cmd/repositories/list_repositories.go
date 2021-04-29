@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	// GetRepositoriesCmd lists all repositories.
+	// ListRepositoriesCmd lists all repositories.
 	ListRepositoriesCmd = &cobra.Command{
 		Use:   "repositories",
 		Short: "List repositories",
@@ -28,13 +28,22 @@ func init() {
 
 	f := ListRepositoriesCmd.PersistentFlags()
 	f.StringVar(&listRepoArgs.name, "name", "", "List repositories with names that contain this name.")
-	f.IntVar(&listRepoArgs.vcs, "vcs", 1, "List repositories which belong to a given vcs. Github = 1...")
+	f.IntVar(&listRepoArgs.vcs, "vcs", -1, "List repositories which belong to a given vcs. Github = 1...")
 }
 
 func runListRepositoryCmd(c *cobra.Command, args []string) {
-	opts := &models.ListOptions{
-		Name: repoArgs.name,
-		VCS:  repoArgs.vcs,
+	var opts *models.ListOptions
+
+	if listRepoArgs.name != "" {
+		opts = &models.ListOptions{
+			Name: listRepoArgs.name,
+		}
+	}
+	if listRepoArgs.vcs > 0 {
+		if opts == nil {
+			opts = &models.ListOptions{}
+		}
+		opts.VCS = listRepoArgs.vcs
 	}
 	repos, err := cmd.KC.RepositoryClient.List(opts)
 	if err != nil {

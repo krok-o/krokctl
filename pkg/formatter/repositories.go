@@ -13,6 +13,7 @@ func FormatRepository(repo *models.Repository, opt string) string {
 	for _, c := range repo.Commands {
 		listOfCommandNames = append(listOfCommandNames, c.Name)
 	}
+
 	d := []kv{
 		{"id", repo.ID},
 		{"name", repo.Name},
@@ -20,6 +21,11 @@ func FormatRepository(repo *models.Repository, opt string) string {
 		{"vcs", repo.VCS},
 		{"callback-url", repo.UniqueURL},
 		{"attached-commands", strings.Join(listOfCommandNames, ",")},
+	}
+	if repo.ProjectID != nil {
+		d = append(d, kv{
+			"project-id", *repo.ProjectID,
+		})
 	}
 	formatter := NewFormatter(opt)
 	return formatter.FormatObject(d)
@@ -35,6 +41,11 @@ func FormatRepositories(repos []*models.Repository, opt string) string {
 			{"name", r.Name},
 			{"url", r.URL},
 			{"vcs", r.VCS},
+		}
+		if r.ProjectID != nil {
+			data = append(data, kv{
+				"project-id", *r.ProjectID,
+			})
 		}
 		d = append(d, data)
 	}

@@ -27,7 +27,8 @@ var (
 			password string
 			secret   string
 		}
-		vcs int
+		vcs       int
+		projectID int
 	}
 )
 
@@ -43,6 +44,7 @@ func init() {
 	f.StringVar(&repoArgs.auth.username, "username", "", "A username to access the repository")
 	f.StringVar(&repoArgs.auth.password, "password", "", "A password to access the repository.")
 	f.IntVar(&repoArgs.vcs, "vcs", 1, "Version control system. Please refer to krok documentation to find out what is supported. 1 = Github.")
+	f.IntVar(&repoArgs.projectID, "project-id", -1, "Project ID in case the repository is a Gitlab repository..")
 }
 
 func runRepositoryCmd(c *cobra.Command, args []string) {
@@ -58,6 +60,9 @@ func runRepositoryCmd(c *cobra.Command, args []string) {
 			Password: repoArgs.auth.password,
 		},
 		Events: repoArgs.events,
+	}
+	if repoArgs.projectID > -1 {
+		repo.ProjectID = &repoArgs.projectID
 	}
 	repo, err := cmd.KC.RepositoryClient.Create(repo)
 	if err != nil {
