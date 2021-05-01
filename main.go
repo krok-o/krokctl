@@ -9,6 +9,7 @@ import (
 	_ "github.com/krok-o/krokctl/cmd/platforms"
 	_ "github.com/krok-o/krokctl/cmd/repositories"
 	_ "github.com/krok-o/krokctl/cmd/settings"
+	_ "github.com/krok-o/krokctl/cmd/vault"
 	_ "github.com/krok-o/krokctl/cmd/vcs"
 )
 
