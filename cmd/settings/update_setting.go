@@ -28,6 +28,9 @@ func init() {
 	f := UpdateSettingCmd.PersistentFlags()
 	f.StringVar(&updateSettingArgs.value, "value", "", "The value of the setting.")
 	f.IntVar(&updateSettingArgs.id, "id", -1, "ID of the setting to update the value for.")
+	if err := UpdateSettingCmd.MarkPersistentFlagRequired("id"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
 }
 
 func runUpdateSettingCmd(c *cobra.Command, args []string) {

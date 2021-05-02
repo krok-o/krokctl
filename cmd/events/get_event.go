@@ -26,6 +26,10 @@ func init() {
 
 	f := GetEventCmd.PersistentFlags()
 	f.IntVar(&getEventArgs.id, "id", 1, "ID of the event to get information for.")
+
+	if err := GetEventCmd.MarkPersistentFlagRequired("id"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
 }
 
 func runGetEventCmd(c *cobra.Command, args []string) {

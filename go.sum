@@ -264,6 +264,8 @@ github.com/krok-o/krok v0.0.0-20210428193538-c021babf8feb h1:FCi9R9wY6u64RUlhzE5
 github.com/krok-o/krok v0.0.0-20210428193538-c021babf8feb/go.mod h1:gMDkYenSxcZtaP1Sl/+lPbFO2uZIbYGTbq6Qa0r8gW4=
 github.com/krok-o/krok v0.0.0-20210429124114-2db50ba4481b h1:kT9zNv9bGLYGpejFqPA6UBYspYcb4DTWzpUoa7uto+o=
 github.com/krok-o/krok v0.0.0-20210429124114-2db50ba4481b/go.mod h1:gMDkYenSxcZtaP1Sl/+lPbFO2uZIbYGTbq6Qa0r8gW4=
+github.com/krok-o/krok v0.0.0-20210501183030-f7aa4c0f181b h1:/SmmXl9mT+p99XXhsgXZylA24b+7KtzzLYfabBpk7iU=
+github.com/krok-o/krok v0.0.0-20210501183030-f7aa4c0f181b/go.mod h1:gMDkYenSxcZtaP1Sl/+lPbFO2uZIbYGTbq6Qa0r8gW4=
 github.com/labstack/echo/v4 v4.1.17 h1:PQIBaRplyRy3OjwILGkPg89JRtH2x5bssi59G2EL3fo=
 github.com/labstack/echo/v4 v4.1.17/go.mod h1:Tn2yRQL/UclUalpb5rPdXDevbkJ+lp/2svdyFBg6CHQ=
 github.com/labstack/gommon v0.3.0 h1:JEeO0bvc78PKdyHxloTKiF8BD5iGrH8T6MSeGvSgob0=

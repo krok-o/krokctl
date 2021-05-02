@@ -26,6 +26,10 @@ func init() {
 
 	f := GetCommandCmd.PersistentFlags()
 	f.IntVar(&getCommandArgs.id, "id", 1, "ID of the command to get information for.")
+
+	if err := GetCommandCmd.MarkPersistentFlagRequired("id"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
 }
 
 func runGetCommandCmd(c *cobra.Command, args []string) {

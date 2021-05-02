@@ -26,6 +26,9 @@ func init() {
 
 	f := GetRepositoriesCmd.PersistentFlags()
 	f.IntVar(&getRepoArgs.id, "id", 1, "ID of the repository to get information for.")
+	if err := GetRepositoriesCmd.MarkPersistentFlagRequired("id"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
 }
 
 func runGetRepositoryCmd(c *cobra.Command, args []string) {

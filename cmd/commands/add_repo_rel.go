@@ -27,6 +27,13 @@ func init() {
 	f := AddRepoRelCmd.PersistentFlags()
 	f.IntVar(&addRepoRelArgs.commandID, "command-id", -1, "ID of the command to add to repository.")
 	f.IntVar(&addRepoRelArgs.repoID, "repository-id", -1, "ID of the repository to add the command to.")
+
+	if err := AddRepoRelCmd.MarkPersistentFlagRequired("command-id"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
+	if err := AddRepoRelCmd.MarkPersistentFlagRequired("repository-id"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
 }
 
 func runAddRepoRelCmd(c *cobra.Command, args []string) {

@@ -25,6 +25,10 @@ func init() {
 
 	f := DeleteCommandCmd.PersistentFlags()
 	f.IntVar(&deleteCommandArgs.id, "id", -1, "ID of the Command to delete.")
+
+	if err := DeleteCommandCmd.MarkPersistentFlagRequired("id"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
 }
 
 func runDeleteCommandCmd(c *cobra.Command, args []string) {

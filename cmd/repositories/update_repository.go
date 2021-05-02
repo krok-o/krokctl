@@ -29,6 +29,9 @@ func init() {
 	f := UpdateRepositoryCmd.PersistentFlags()
 	f.StringVar(&updateRepoArgs.name, "name", "", "The name of the repository.")
 	f.IntVar(&updateRepoArgs.id, "id", -1, "The ID of the repository to update.")
+	if err := UpdateRepositoryCmd.MarkPersistentFlagRequired("id"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
 }
 
 func runUpdateRepositoryCmd(c *cobra.Command, args []string) {

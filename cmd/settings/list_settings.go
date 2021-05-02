@@ -26,6 +26,9 @@ func init() {
 
 	f := ListSettingsCmd.PersistentFlags()
 	f.IntVar(&listSettingArgs.commandID, "command-id", -1, "The id of the command.")
+	if err := ListSettingsCmd.MarkPersistentFlagRequired("command-id"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
 }
 
 func runListSettingsCmd(c *cobra.Command, args []string) {

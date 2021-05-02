@@ -36,6 +36,10 @@ func init() {
 	f.StringVar(&updateCommandArgs.schedule, "schedule", "", "The schedule of the command.")
 	f.BoolVar(&updateCommandArgs.enabled, "enabled", true, "Enable / Disable command.")
 	f.IntVar(&updateCommandArgs.id, "id", -1, "The ID of the command to update.")
+
+	if err := UpdateCommandCmd.MarkPersistentFlagRequired("id"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
 }
 
 func runUpdateCommandCmd(c *cobra.Command, args []string) {

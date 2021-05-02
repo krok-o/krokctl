@@ -27,6 +27,13 @@ func init() {
 	f := RemoveRepoRelCmd.PersistentFlags()
 	f.IntVar(&removeRepoRelArgs.commandID, "command-id", -1, "ID of the command to remove to repository.")
 	f.IntVar(&removeRepoRelArgs.repoID, "repository-id", -1, "ID of the repository to remove the command to.")
+
+	if err := RemoveRepoRelCmd.MarkPersistentFlagRequired("command-id"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
+	if err := RemoveRepoRelCmd.MarkPersistentFlagRequired("repository-id"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
 }
 
 func runRemoveRepoRelCmd(c *cobra.Command, args []string) {

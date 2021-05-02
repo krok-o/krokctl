@@ -27,6 +27,13 @@ func init() {
 	f := AddPlatformRelCmd.PersistentFlags()
 	f.IntVar(&addPlatformRelArgs.commandID, "command-id", -1, "ID of the command to add to platform.")
 	f.IntVar(&addPlatformRelArgs.platformID, "platform-id", -1, "ID of the platform to add the command to.")
+
+	if err := AddPlatformRelCmd.MarkPersistentFlagRequired("command-id"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
+	if err := AddPlatformRelCmd.MarkPersistentFlagRequired("platform-id"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
 }
 
 func runAddPlatformRelCmd(c *cobra.Command, args []string) {

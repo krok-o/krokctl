@@ -26,6 +26,9 @@ func init() {
 
 	f := GetSettingCmd.PersistentFlags()
 	f.IntVar(&getSettingArgs.id, "id", 1, "ID of the setting to get information for.")
+	if err := GetSettingCmd.MarkPersistentFlagRequired("id"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
 }
 
 func runGetSettingCmd(c *cobra.Command, args []string) {

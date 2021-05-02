@@ -25,6 +25,9 @@ func init() {
 
 	f := DeleteRepositoryCmd.PersistentFlags()
 	f.IntVar(&deleteRepoArgs.id, "id", -1, "ID of the repository to delete.")
+	if err := DeleteRepositoryCmd.MarkPersistentFlagRequired("id"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
 }
 
 func runDeleteRepositoryCmd(c *cobra.Command, args []string) {

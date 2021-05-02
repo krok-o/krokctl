@@ -25,6 +25,9 @@ func init() {
 
 	f := DeleteSettingCmd.PersistentFlags()
 	f.IntVar(&deleteSettingArgs.id, "id", -1, "ID of the setting to delete.")
+	if err := DeleteSettingCmd.MarkPersistentFlagRequired("id"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
 }
 
 func runDeleteSettingCmd(c *cobra.Command, args []string) {

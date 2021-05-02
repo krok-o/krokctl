@@ -45,6 +45,19 @@ func init() {
 	f.StringVar(&repoArgs.auth.password, "password", "", "A password to access the repository.")
 	f.IntVar(&repoArgs.vcs, "vcs", 1, "Version control system. Please refer to krok documentation to find out what is supported. 1 = Github.")
 	f.IntVar(&repoArgs.projectID, "project-id", -1, "Project ID in case the repository is a Gitlab repository..")
+
+	if err := RepositoryCmd.MarkPersistentFlagRequired("name"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
+	if err := RepositoryCmd.MarkPersistentFlagRequired("vcs"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
+	if err := RepositoryCmd.MarkPersistentFlagRequired("url"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
+	if err := RepositoryCmd.MarkPersistentFlagRequired("events"); err != nil {
+		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
+	}
 }
 
 func runRepositoryCmd(c *cobra.Command, args []string) {
