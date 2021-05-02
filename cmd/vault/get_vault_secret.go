@@ -17,7 +17,7 @@ var (
 		Run:   runGetSecretCmd,
 	}
 	getSecretArgs struct {
-		name string
+		key string
 	}
 )
 
@@ -25,15 +25,15 @@ func init() {
 	cmd.GetCmd.AddCommand(GetSecretCmd)
 
 	f := GetSecretCmd.PersistentFlags()
-	f.StringVar(&getSecretArgs.name, "name", "", "Name of the secret to retrieve.")
+	f.StringVar(&getSecretArgs.key, "key", "", "Key of the secret to retrieve.")
 
-	if err := GetSecretCmd.MarkPersistentFlagRequired("name"); err != nil {
+	if err := GetSecretCmd.MarkPersistentFlagRequired("key"); err != nil {
 		cmd.CLILog.Fatal().Err(err).Msg("Failed to mark required flag.")
 	}
 }
 
 func runGetSecretCmd(c *cobra.Command, args []string) {
-	command, err := cmd.KC.VaultClient.Get(getSecretArgs.name)
+	command, err := cmd.KC.VaultClient.Get(getSecretArgs.key)
 	if err != nil {
 		cmd.CLILog.Fatal().Err(err).Msg("Failed to get secret.")
 	}
