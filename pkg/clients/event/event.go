@@ -58,7 +58,7 @@ func (c *Client) List(repoID int, opts *models.ListOptions) ([]*models.Event, er
 
 	var result []*models.Event
 	u.Path = path.Join(u.Path, eventsURI, strconv.Itoa(repoID))
-	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, b, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String(), clients.WithPayload(b), clients.WithOutput(&result))
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
@@ -83,7 +83,7 @@ func (c *Client) Get(id int) (*models.Event, error) {
 
 	result := models.Event{}
 	u.Path = path.Join(u.Path, eventURI, strconv.Itoa(id))
-	code, err := c.Handler.MakeRequest(ctx, http.MethodGet, nil, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodGet, u.String(), clients.WithOutput(&result))
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err

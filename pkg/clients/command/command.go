@@ -34,7 +34,6 @@ func NewClient(address string, client *http.Client, token string, log zerolog.Lo
 		Address: address,
 		Logger:  log,
 		Handler: clients.NewHandler(*client, token, log),
-		token:   token,
 	}
 }
 
@@ -43,7 +42,6 @@ type Client struct {
 	Address string
 	Logger  zerolog.Logger
 	Handler *clients.Handler
-	token   string
 }
 
 // Upload uploads a command resource.
@@ -68,7 +66,9 @@ func (c *Client) Upload(file string) (*models.Command, error) {
 		c.Logger.Debug().Err(err).Msg("Failed to open file.")
 		return nil, err
 	}
-	defer fh.Close()
+	defer func(fh *os.File) {
+		_ = fh.Close()
+	}(fh)
 
 	if _, err = io.Copy(fileWriter, fh); err != nil {
 		c.Logger.Debug().Err(err).Msg("Failed to copy to fileWriter")
@@ -76,31 +76,23 @@ func (c *Client) Upload(file string) (*models.Command, error) {
 	}
 
 	contentType := bodyWriter.FormDataContentType()
-	bodyWriter.Close()
+	_ = bodyWriter.Close()
 
 	u, err := url.Parse(c.Address)
 	if err != nil {
 		c.Logger.Debug().Err(err).Msg("Failed to parse address")
 		return nil, err
 	}
-	u.Path = path.Join(u.Path, commandURI)
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, u.String(), bodyBuf)
-	if err != nil {
-		c.Logger.Error().Err(err).Msg("Failed to create HTTP request.")
-		return nil, err
-	}
-	req.Header.Add("Content-Type", contentType)
-	req.Header.Add("Authorization", "Bearer "+c.token)
-
 	result := models.Command{}
-	response, err := c.Handler.Send(req, &result)
+	u.Path = path.Join(u.Path, commandURI)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String(), clients.WithPayload(bodyBuf.Bytes()), clients.WithOutput(&result), clients.WithContentType(contentType))
 	if err != nil {
+		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
 	}
-
-	if response.StatusCode > 299 || response.StatusCode < 200 {
-		c.Logger.Error().Str("url", u.String()).Int("code", response.StatusCode).Msg("Return code was not OK")
-		return nil, fmt.Errorf("return code was not OK %d", response.StatusCode)
+	if code > 299 || code < 200 {
+		c.Logger.Error().Str("url", u.String()).Int("code", code).Msg("Return code was not OK")
+		return nil, fmt.Errorf("return code was not OK %d", code)
 	}
 	return &result, nil
 }
@@ -124,7 +116,7 @@ func (c *Client) Update(repo *models.Command) (*models.Command, error) {
 
 	result := models.Command{}
 	u.Path = path.Join(u.Path, commandURI, "update")
-	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, b, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String(), clients.WithPayload(b), clients.WithOutput(&result))
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
@@ -147,7 +139,7 @@ func (c *Client) Delete(id int) error {
 		return err
 	}
 	u.Path = path.Join(u.Path, commandURI, strconv.Itoa(id))
-	code, err := c.Handler.MakeRequest(ctx, http.MethodDelete, nil, u.String(), nil)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodDelete, u.String())
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return err
@@ -178,7 +170,7 @@ func (c *Client) List(opts *models.ListOptions) ([]*models.Command, error) {
 
 	var result []*models.Command
 	u.Path = path.Join(u.Path, commandsURI)
-	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, b, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String(), clients.WithPayload(b), clients.WithOutput(&result))
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
@@ -203,7 +195,7 @@ func (c *Client) Get(id int) (*models.Command, error) {
 
 	result := models.Command{}
 	u.Path = path.Join(u.Path, commandURI, strconv.Itoa(id))
-	code, err := c.Handler.MakeRequest(ctx, http.MethodGet, nil, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodGet, u.String(), clients.WithOutput(&result))
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
@@ -227,7 +219,7 @@ func (c *Client) AddRelationshipToRepository(commandID int, repositoryID int) er
 	}
 
 	u.Path = path.Join(u.Path, commandURI, "add-command-rel-for-repository", strconv.Itoa(commandID), strconv.Itoa(repositoryID))
-	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, nil, u.String(), nil)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String())
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return fmt.Errorf("failed to call POST handler: %w", err)
@@ -251,7 +243,7 @@ func (c *Client) RemoveRelationshipToRepository(commandID int, repositoryID int)
 	}
 
 	u.Path = path.Join(u.Path, commandURI, "remove-command-rel-for-repository", strconv.Itoa(commandID), strconv.Itoa(repositoryID))
-	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, nil, u.String(), nil)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String())
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return fmt.Errorf("failed to call POST handler: %w", err)
@@ -275,7 +267,7 @@ func (c *Client) RemoveRelationshipToPlatform(commandID int, platformID int) err
 	}
 
 	u.Path = path.Join(u.Path, commandURI, "remove-command-rel-for-platform", strconv.Itoa(commandID), strconv.Itoa(platformID))
-	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, nil, u.String(), nil)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String())
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return fmt.Errorf("failed to call POST handler: %w", err)
@@ -299,7 +291,7 @@ func (c *Client) AddRelationshipToPlatform(commandID int, platformID int) error 
 	}
 
 	u.Path = path.Join(u.Path, commandURI, "add-command-rel-for-platform", strconv.Itoa(commandID), strconv.Itoa(platformID))
-	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, nil, u.String(), nil)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String())
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return fmt.Errorf("failed to call POST handler: %w", err)

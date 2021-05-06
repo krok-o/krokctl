@@ -57,7 +57,7 @@ func (c *Client) Create(setting *models.CommandSetting) error {
 	}
 
 	u.Path = path.Join(u.Path, settingURI)
-	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, b, u.String(), nil)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String(), clients.WithPayload(b))
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return err
@@ -87,7 +87,7 @@ func (c *Client) Update(setting *models.CommandSetting) error {
 	}
 
 	u.Path = path.Join(u.Path, settingsURI, "update")
-	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, b, u.String(), nil)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String(), clients.WithPayload(b))
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return err
@@ -112,7 +112,7 @@ func (c *Client) List(id int) ([]*models.CommandSetting, error) {
 
 	var result []*models.CommandSetting
 	u.Path = path.Join(u.Path, listURI, strconv.Itoa(id), "settings")
-	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, nil, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String(), clients.WithOutput(&result))
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
@@ -137,7 +137,7 @@ func (c *Client) Get(id int) (*models.CommandSetting, error) {
 
 	result := models.CommandSetting{}
 	u.Path = path.Join(u.Path, settingsURI, strconv.Itoa(id))
-	code, err := c.Handler.MakeRequest(ctx, http.MethodGet, nil, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodGet, u.String(), clients.WithOutput(&result))
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
@@ -161,7 +161,7 @@ func (c *Client) Delete(id int) error {
 	}
 
 	u.Path = path.Join(u.Path, settingsURI, strconv.Itoa(id))
-	code, err := c.Handler.MakeRequest(ctx, http.MethodDelete, nil, u.String(), nil)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodDelete, u.String())
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return err

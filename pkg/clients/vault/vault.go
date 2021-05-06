@@ -56,7 +56,7 @@ func (c *Client) Create(setting *models.VaultSetting) error {
 	}
 
 	u.Path = path.Join(u.Path, vaultURI)
-	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, b, u.String(), nil)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String(), clients.WithPayload(b))
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return err
@@ -86,7 +86,7 @@ func (c *Client) Update(setting *models.VaultSetting) error {
 	}
 
 	u.Path = path.Join(u.Path, vaultURI, "update")
-	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, b, u.String(), nil)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String(), clients.WithPayload(b))
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return err
@@ -111,7 +111,7 @@ func (c *Client) Get(name string) (*models.VaultSetting, error) {
 
 	result := models.VaultSetting{}
 	u.Path = path.Join(u.Path, vaultURI, name)
-	code, err := c.Handler.MakeRequest(ctx, http.MethodGet, nil, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodGet, u.String(), clients.WithOutput(&result))
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
@@ -135,7 +135,7 @@ func (c *Client) Delete(name string) error {
 	}
 
 	u.Path = path.Join(u.Path, vaultURI, name)
-	code, err := c.Handler.MakeRequest(ctx, http.MethodDelete, nil, u.String(), nil)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodDelete, u.String())
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to delete result.")
 		return err
@@ -160,7 +160,7 @@ func (c *Client) List() ([]string, error) {
 
 	var result []string
 	u.Path = path.Join(u.Path, vaultListURI)
-	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, nil, u.String(), &result)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String(), clients.WithOutput(&result))
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err

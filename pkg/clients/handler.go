@@ -26,23 +26,63 @@ type Handler struct {
 	Token  string
 }
 
+// MakeRequestOption defines options for MakeRequest call.
+type MakeRequestOption struct {
+	data        []byte
+	output      interface{}
+	contentType string
+}
+
+// MakeRequestOptions defines functional options for optional parameters.
+type MakeRequestOptions func(option *MakeRequestOption)
+
+// WithPayload adds a payload options for MakeRequest to send if it's a POST request for example.
+func WithPayload(payload []byte) MakeRequestOptions {
+	return func(option *MakeRequestOption) {
+		option.data = payload
+	}
+}
+
+// WithOutput adds an output if there is something to get back from MakeRequest like a Get call.
+func WithOutput(out interface{}) MakeRequestOptions {
+	return func(option *MakeRequestOption) {
+		option.output = out
+	}
+}
+
+// WithContentType adds a specific content type to the request. By default it's application/json.
+func WithContentType(ct string) MakeRequestOptions {
+	return func(option *MakeRequestOption) {
+		option.contentType = ct
+	}
+}
+
 // MakeRequest sends a request to the designated URL.
 // @data - optional data to send along if it is a POST request.
 // @url - defines the destination.
 // @output - optional output if the body contains a request to parse.
-func (p *Handler) MakeRequest(ctx context.Context, method string, data []byte, url string, output interface{}) (int, error) {
-	payload := bytes.NewReader(data)
-	return p.prepare(ctx, method, url, payload, output)
+func (p *Handler) MakeRequest(ctx context.Context, method string, url string, opts ...MakeRequestOptions) (int, error) {
+	mos := &MakeRequestOption{
+		data:        nil,
+		output:      nil,
+		contentType: "application/json",
+	}
+
+	for _, o := range opts {
+		o(mos)
+	}
+	payload := bytes.NewReader(mos.data)
+	return p.prepare(ctx, method, url, payload, mos.output, mos.contentType)
 }
 
 // prepare the request. Any possible result will be put into the parseTo variable.
-func (p *Handler) prepare(ctx context.Context, method, url string, payload io.Reader, parseTo interface{}) (int, error) {
+func (p *Handler) prepare(ctx context.Context, method, url string, payload io.Reader, parseTo interface{}, contentType string) (int, error) {
 	req, err := http.NewRequestWithContext(ctx, method, url, payload)
 	if err != nil {
 		p.Logger.Error().Err(err).Msg("Failed to create HTTP request.")
 		return http.StatusInternalServerError, err
 	}
-	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Content-Type", contentType)
 	if p.Token != "" {
 		req.Header.Add("Authorization", "Bearer "+p.Token)
 	}
