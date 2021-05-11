@@ -5,6 +5,7 @@ import (
 
 	"github.com/krok-o/krokctl/pkg/clients/event"
 	"github.com/krok-o/krokctl/pkg/clients/runs"
+	"github.com/krok-o/krokctl/pkg/clients/user"
 	"github.com/krok-o/krokctl/pkg/clients/vault"
 	"github.com/rs/zerolog"
 
@@ -31,6 +32,7 @@ type KrokClient struct {
 	SettingsClient   *setting.Client
 	EventClient      *event.Client
 	VaultClient      *vault.Client
+	UserClient       *user.Client
 	Token            string
 }
 
@@ -44,6 +46,7 @@ func NewKrokClient(cfg Config, log zerolog.Logger) *KrokClient {
 	eventsClient := event.NewClient(cfg.Address, &http.Client{}, cfg.Token, log)
 	vaultClient := vault.NewClient(cfg.Address, &http.Client{}, cfg.Token, log)
 	commandRunClient := runs.NewClient(cfg.Address, &http.Client{}, cfg.Token, log)
+	userClient := user.NewClient(cfg.Address, &http.Client{}, cfg.Token, log)
 	return &KrokClient{
 		RepositoryClient: repoClient,
 		VcsClient:        vcsClient,
@@ -53,6 +56,7 @@ func NewKrokClient(cfg Config, log zerolog.Logger) *KrokClient {
 		SettingsClient:   settingsClient,
 		EventClient:      eventsClient,
 		VaultClient:      vaultClient,
+		UserClient:       userClient,
 		Token:            cfg.Token,
 	}
 }
