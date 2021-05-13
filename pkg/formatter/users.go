@@ -17,6 +17,20 @@ func FormatUser(user *models.User, opt string) string {
 	return formatter.FormatObject(d)
 }
 
+// FormatNewUser formats a new user and displays it with the request
+// format option.
+func FormatNewUser(user *models.NewUser, opt string) string {
+	d := []kv{
+		{"id", user.ID},
+		{"display_name", user.DisplayName},
+		{"email", user.Email},
+		{"last_login", user.LastLogin.String()},
+		{"token", user.Token},
+	}
+	formatter := NewFormatter(opt)
+	return formatter.FormatObject(d)
+}
+
 // FormatUsers formats a list of users and displays it with the requested
 // format option.
 func FormatUsers(users []*models.User, opt string) string {
