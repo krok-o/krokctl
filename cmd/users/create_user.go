@@ -43,5 +43,5 @@ func runCreateUserCmd(c *cobra.Command, args []string) {
 	if err != nil {
 		cmd.CLILog.Fatal().Err(err).Msg("Failed to create a user.")
 	}
-	fmt.Print(formatter.FormatUser(user, cmd.KrokArgs.Formatter))
+	fmt.Print(formatter.FormatNewUser(user, cmd.KrokArgs.Formatter))
 }
