@@ -24,7 +24,7 @@ func FormatRepository(repo *models.Repository, opt string) string {
 	}
 	if repo.GitLab != nil {
 		d = append(d, kv{
-			"project-id", *repo.GitLab.GetProjectID(),
+			"project-id", repo.GitLab.GetProjectID(),
 		})
 	}
 	formatter := NewFormatter(opt)
@@ -44,7 +44,7 @@ func FormatRepositories(repos []*models.Repository, opt string) string {
 		}
 		if r.GitLab != nil {
 			data = append(data, kv{
-				"project-id", *r.GitLab.GetProjectID(),
+				"project-id", r.GitLab.GetProjectID(),
 			})
 		}
 		d = append(d, data)
