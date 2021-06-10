@@ -22,9 +22,9 @@ func FormatRepository(repo *models.Repository, opt string) string {
 		{"callback-url", repo.UniqueURL},
 		{"attached-commands", strings.Join(listOfCommandNames, ",")},
 	}
-	if repo.ProjectID != nil {
+	if repo.GitLab != nil {
 		d = append(d, kv{
-			"project-id", *repo.ProjectID,
+			"project-id", *repo.GitLab.GetProjectID(),
 		})
 	}
 	formatter := NewFormatter(opt)
@@ -42,9 +42,9 @@ func FormatRepositories(repos []*models.Repository, opt string) string {
 			{"url", r.URL},
 			{"vcs", r.VCS},
 		}
-		if r.ProjectID != nil {
+		if r.GitLab != nil {
 			data = append(data, kv{
-				"project-id", *r.ProjectID,
+				"project-id", *r.GitLab.GetProjectID(),
 			})
 		}
 		d = append(d, data)

@@ -75,7 +75,8 @@ func runRepositoryCmd(c *cobra.Command, args []string) {
 		Events: repoArgs.events,
 	}
 	if repoArgs.projectID > -1 {
-		repo.ProjectID = &repoArgs.projectID
+		gitlab := &models.GitLab{ProjectID: &repoArgs.projectID}
+		repo.GitLab = gitlab
 	}
 	repo, err := cmd.KC.RepositoryClient.Create(repo)
 	if err != nil {
