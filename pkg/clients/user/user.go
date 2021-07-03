@@ -39,7 +39,7 @@ type Client struct {
 }
 
 // Create creates a user resource.
-func (c *Client) Create(user *models.User) (*models.NewUser, error) {
+func (c *Client) Create(user *models.User) (*models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeOutInSeconds)*time.Second)
 	defer cancel()
 
@@ -55,7 +55,7 @@ func (c *Client) Create(user *models.User) (*models.NewUser, error) {
 		return nil, err
 	}
 
-	result := models.NewUser{}
+	result := models.User{}
 	u.Path = path.Join(u.Path, userURI)
 	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String(), clients.WithPayload(b), clients.WithOutput(&result))
 	if err != nil {

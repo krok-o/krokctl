@@ -1,31 +1,25 @@
 package formatter
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/krok-o/krok/pkg/models"
 )
 
 // FormatUser formats a user and displays it with the request
 // format option.
 func FormatUser(user *models.User, opt string) string {
-	d := []kv{
-		{"id", user.ID},
-		{"display_name", user.DisplayName},
-		{"email", user.Email},
-		{"last_login", user.LastLogin.String()},
+	var keys []string
+	for _, key := range user.APIKeys {
+		keys = append(keys, fmt.Sprintf("%d:%s", key.ID, key.APIKeyID))
 	}
-	formatter := NewFormatter(opt)
-	return formatter.FormatObject(d)
-}
-
-// FormatNewUser formats a new user and displays it with the request
-// format option.
-func FormatNewUser(user *models.NewUser, opt string) string {
 	d := []kv{
 		{"id", user.ID},
 		{"display_name", user.DisplayName},
 		{"email", user.Email},
 		{"last_login", user.LastLogin.String()},
-		{"token", user.Token},
+		{"api_keys", strings.Join(keys, ", ")},
 	}
 	formatter := NewFormatter(opt)
 	return formatter.FormatObject(d)

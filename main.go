@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/krok-o/krokctl/cmd"
+	_ "github.com/krok-o/krokctl/cmd/auth"
 	_ "github.com/krok-o/krokctl/cmd/commands"
 	_ "github.com/krok-o/krokctl/cmd/events"
 	_ "github.com/krok-o/krokctl/cmd/platforms"
