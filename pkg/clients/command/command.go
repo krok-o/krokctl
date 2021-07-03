@@ -29,11 +29,11 @@ const (
 )
 
 // NewClient creates a new command provider.
-func NewClient(address string, client *http.Client, token string, log zerolog.Logger) *Client {
+func NewClient(address string, log zerolog.Logger, handler clients.Handler) *Client {
 	return &Client{
 		Address: address,
 		Logger:  log,
-		Handler: clients.NewHandler(*client, token, log),
+		Handler: handler,
 	}
 }
 
@@ -41,7 +41,7 @@ func NewClient(address string, client *http.Client, token string, log zerolog.Lo
 type Client struct {
 	Address string
 	Logger  zerolog.Logger
-	Handler *clients.Handler
+	Handler clients.Handler
 }
 
 // Upload uploads a command resource.
