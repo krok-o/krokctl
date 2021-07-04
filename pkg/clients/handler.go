@@ -41,6 +41,8 @@ func NewHandler(cfg Config) *KrokHandler {
 // KrokHandler has methods which can deal with talking to REST endpoints.
 type KrokHandler struct {
 	Config
+
+	tokenCache string
 }
 
 // MakeRequestOption defines options for MakeRequest call.
@@ -100,12 +102,16 @@ func (p *KrokHandler) prepare(ctx context.Context, method, url string, payload i
 		return http.StatusInternalServerError, err
 	}
 	req.Header.Add("Content-Type", contentType)
-	token, err := p.authenticate()
-	if err != nil {
-		return 0, err
+	token := p.tokenCache
+	if token == "" {
+		if token, err = p.authenticate(); err != nil {
+			return http.StatusInternalServerError, err
+		}
+		// any subsequent calls to the api during this run instance should come from a cached
+		// record instead of constantly calling out to authenticate.
+		p.tokenCache = token
 	}
 	req.Header.Add("Authorization", "Bearer "+token)
-
 	response, err := p.Send(req, parseTo)
 	if err != nil {
 		return http.StatusInternalServerError, err
