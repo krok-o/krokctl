@@ -3,9 +3,10 @@ package cmd
 import (
 	"os"
 
-	"github.com/krok-o/krokctl/pkg"
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
+
+	"github.com/krok-o/krokctl/pkg"
 )
 
 const (
@@ -27,9 +28,11 @@ var (
 	}).With().Timestamp().Logger()
 	// KrokArgs define the root arguments for all commands.
 	KrokArgs struct {
-		Token     string
-		Formatter string
-		endpoint  string
+		APIKeyID     string
+		APIKeySecret string
+		Email        string
+		Formatter    string
+		endpoint     string
 	}
 	// KC is the krok client with all the clients bundled together.
 	KC *pkg.KrokClient
@@ -46,18 +49,21 @@ func init() {
 	f := krokCmd.PersistentFlags()
 	// Persistent flags
 	defaultEndpoint := getEnvOrDefault("ENDPOINT", "http://localhost:9998")
-	token := getEnvOrDefault("TOKEN", "")
-	f.StringVar(&KrokArgs.Token, "token", token, "Token used to authenticate with the server")
+	apiKeyID := getEnvOrDefault("API_KEY_ID", "")
+	apiKeySecret := getEnvOrDefault("API_KEY_SECRET", "")
+	email := getEnvOrDefault("EMAIL", "")
+	f.StringVar(&KrokArgs.APIKeyID, "api-key-id", apiKeyID, "ID of the api key to use for authenticating with Krok.")
+	f.StringVar(&KrokArgs.APIKeySecret, "api-key-secret", apiKeySecret, "Secret of the api key to use for authenticating with Krok.")
+	f.StringVar(&KrokArgs.Email, "email", email, "Email of the user.")
 	f.StringVar(&KrokArgs.Formatter, "format", "table", "Format to display data in: json|table")
 	f.StringVar(&KrokArgs.endpoint, "endpoint", defaultEndpoint, "API endpoint of the Krok server")
 
-	if token == "" {
-		CLILog.Fatal().Msg("Token is empty. Please either provide one with --token or use KROK_TOKEN environment property.")
-	}
 	// Set up the main client.
 	KC = pkg.NewKrokClient(pkg.Config{
-		Address: KrokArgs.endpoint,
-		Token:   KrokArgs.Token,
+		Address:      KrokArgs.endpoint,
+		APIKeyID:     KrokArgs.APIKeyID,
+		APIKeySecret: KrokArgs.APIKeySecret,
+		Email:        KrokArgs.Email,
 	}, CLILog)
 }
 
