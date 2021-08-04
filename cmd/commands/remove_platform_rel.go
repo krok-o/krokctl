@@ -9,10 +9,10 @@ import (
 )
 
 var (
-	// RemovePlatformRelCmd add a relationship to a repository.
+	// RemovePlatformRelCmd removes a relationship to a repository.
 	RemovePlatformRelCmd = &cobra.Command{
-		Use:   "add",
-		Short: "Add command platform relationship",
+		Use:   "remove",
+		Short: "Remove command platform relationship",
 		Run:   runRemovePlatformRelCmd,
 	}
 	removePlatformRelArgs struct {
