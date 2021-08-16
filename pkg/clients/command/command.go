@@ -44,6 +44,37 @@ type Client struct {
 	Handler clients.Handler
 }
 
+// Create creates a new command resource.
+func (c *Client) Create(command *models.Command) (*models.Command, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeOutInSeconds)*time.Second)
+	defer cancel()
+
+	b, err := json.Marshal(command)
+	if err != nil {
+		c.Logger.Debug().Err(err).Msg("Failed to parse command")
+		return nil, err
+	}
+
+	u, err := url.Parse(c.Address)
+	if err != nil {
+		c.Logger.Debug().Err(err).Msg("Failed to parse address")
+		return nil, err
+	}
+
+	result := models.Command{}
+	u.Path = path.Join(u.Path, commandURI)
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String(), clients.WithPayload(b), clients.WithOutput(&result))
+	if err != nil {
+		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
+		return nil, err
+	}
+	if code > 299 || code < 200 {
+		c.Logger.Error().Str("url", u.String()).Int("code", code).Msg("Return code was not OK")
+		return nil, fmt.Errorf("return code was not OK %d", code)
+	}
+	return &result, nil
+}
+
 // Upload uploads a command resource.
 func (c *Client) Upload(file string) (*models.Command, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeOutInSeconds)*time.Second)
@@ -85,7 +116,7 @@ func (c *Client) Upload(file string) (*models.Command, error) {
 	}
 	result := models.Command{}
 	u.Path = path.Join(u.Path, commandURI)
-	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String(), clients.WithPayload(bodyBuf.Bytes()), clients.WithOutput(&result), clients.WithContentType(contentType))
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPut, u.String(), clients.WithPayload(bodyBuf.Bytes()), clients.WithOutput(&result), clients.WithContentType(contentType))
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
