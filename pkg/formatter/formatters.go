@@ -5,8 +5,9 @@ import (
 	"encoding/json"
 	"strconv"
 
-	"github.com/krok-o/krokctl/cmd"
 	"github.com/olekukonko/tablewriter"
+
+	"github.com/krok-o/krokctl/cmd"
 )
 
 type kv struct {
@@ -137,12 +138,19 @@ func (t *TableFormatter) FormatList(data [][]kv) string {
 	return buf.String()
 }
 
+func dashIfEmpty(v string) string {
+	if v == "" {
+		return "-"
+	}
+	return v
+}
+
 // convertToString converts a value to string. Mostly this will be either an int or a string.
 // In the future, I'm going to allow slices and format them as sub tables.
 func convertToString(value interface{}) string {
 	switch v := value.(type) {
 	case string:
-		return v
+		return dashIfEmpty(v)
 	case int:
 		return strconv.Itoa(v)
 	default:

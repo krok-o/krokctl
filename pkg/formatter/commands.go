@@ -14,6 +14,10 @@ func FormatCommand(command *models.Command, opt string) string {
 	for _, r := range command.Repositories {
 		listOfRepoNames = append(listOfRepoNames, r.Name)
 	}
+	var listOfPlatforms []string
+	for _, r := range command.Platforms {
+		listOfPlatforms = append(listOfPlatforms, r.Name)
+	}
 	d := []kv{
 		{"id", command.ID},
 		{"name", command.Name},
@@ -22,7 +26,9 @@ func FormatCommand(command *models.Command, opt string) string {
 		{"filename", command.Filename},
 		{"schedule", command.Schedule},
 		{"enabled", strconv.FormatBool(command.Enabled)},
+		{"url", command.URL},
 		{"repositories", strings.Join(listOfRepoNames, ",")},
+		{"platforms", strings.Join(listOfPlatforms, ",")},
 	}
 	formatter := NewFormatter(opt)
 	return formatter.FormatObject(d)
