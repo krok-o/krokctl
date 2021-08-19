@@ -41,33 +41,34 @@ type Client struct {
 }
 
 // Create will create settings.
-func (c *Client) Create(setting *models.CommandSetting) error {
+func (c *Client) Create(setting *models.CommandSetting) (*models.CommandSetting, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeOutInSeconds)*time.Second)
 	defer cancel()
 
 	b, err := json.Marshal(setting)
 	if err != nil {
 		c.Logger.Debug().Err(err).Msg("Failed to parse repository")
-		return err
+		return nil, err
 	}
 
 	u, err := url.Parse(c.Address)
 	if err != nil {
 		c.Logger.Debug().Err(err).Msg("Failed to parse address")
-		return err
+		return nil, err
 	}
 
+	result := &models.CommandSetting{}
 	u.Path = path.Join(u.Path, settingURI)
-	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String(), clients.WithPayload(b))
+	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String(), clients.WithPayload(b), clients.WithOutput(&result))
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
-		return err
+		return nil, err
 	}
 	if code > 299 || code < 200 {
 		c.Logger.Error().Str("url", u.String()).Int("code", code).Msg("Return code was not OK")
-		return fmt.Errorf("return code was not OK %d", code)
+		return nil, fmt.Errorf("return code was not OK %d", code)
 	}
-	return nil
+	return result, nil
 }
 
 // Update will update a setting.

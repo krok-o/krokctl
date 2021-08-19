@@ -6,7 +6,9 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/krok-o/krok/pkg/models"
+
 	"github.com/krok-o/krokctl/cmd"
+	"github.com/krok-o/krokctl/pkg/formatter"
 )
 
 var (
@@ -41,9 +43,10 @@ func runSettingCmd(c *cobra.Command, args []string) {
 		Value:     settingArgs.value,
 		CommandID: settingArgs.commandID,
 	}
-	if err := cmd.KC.SettingsClient.Create(setting); err != nil {
+	setting, err := cmd.KC.SettingsClient.Create(setting)
+	if err != nil {
 		cmd.CLILog.Fatal().Err(err).Msg("Failed to create setting.")
 	}
 
-	fmt.Println("Success!")
+	fmt.Print(formatter.FormatSetting(setting, cmd.KrokArgs.Formatter))
 }
