@@ -21,12 +21,9 @@ func FormatCommand(command *models.Command, opt string) string {
 	d := []kv{
 		{"id", command.ID},
 		{"name", command.Name},
-		{"hash", command.Hash},
-		{"location", command.Location},
-		{"filename", command.Filename},
 		{"schedule", command.Schedule},
+		{"image", command.Image},
 		{"enabled", strconv.FormatBool(command.Enabled)},
-		{"url", command.URL},
 		{"repositories", strings.Join(listOfRepoNames, ",")},
 		{"platforms", strings.Join(listOfPlatforms, ",")},
 	}
@@ -42,10 +39,8 @@ func FormatCommands(commands []*models.Command, opt string) string {
 		data := []kv{
 			{"id", command.ID},
 			{"name", command.Name},
-			{"hash", command.Hash},
-			{"location", command.Location},
-			{"filename", command.Filename},
 			{"schedule", command.Schedule},
+			{"image", command.Image},
 			{"enabled", strconv.FormatBool(command.Enabled)},
 		}
 		d = append(d, data)
