@@ -1,17 +1,12 @@
 package command
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
-	"mime/multipart"
 	"net/http"
 	"net/url"
-	"os"
 	"path"
-	"path/filepath"
 	"strconv"
 	"time"
 
@@ -64,59 +59,6 @@ func (c *Client) Create(command *models.Command) (*models.Command, error) {
 	result := models.Command{}
 	u.Path = path.Join(u.Path, commandURI)
 	code, err := c.Handler.MakeRequest(ctx, http.MethodPost, u.String(), clients.WithPayload(b), clients.WithOutput(&result))
-	if err != nil {
-		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
-		return nil, err
-	}
-	if code > 299 || code < 200 {
-		c.Logger.Error().Str("url", u.String()).Int("code", code).Msg("Return code was not OK")
-		return nil, fmt.Errorf("return code was not OK %d", code)
-	}
-	return &result, nil
-}
-
-// Upload uploads a command resource.
-func (c *Client) Upload(file string) (*models.Command, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeOutInSeconds)*time.Second)
-	defer cancel()
-
-	bodyBuf := &bytes.Buffer{}
-	bodyWriter := multipart.NewWriter(bodyBuf)
-
-	// this step is very important
-	filename := filepath.Base(file)
-	fileWriter, err := bodyWriter.CreateFormFile("file", filename)
-	if err != nil {
-		c.Logger.Debug().Err(err).Msg("Error writing to buffer.")
-		return nil, err
-	}
-
-	// open file handle
-	fh, err := os.Open(filename)
-	if err != nil {
-		c.Logger.Debug().Err(err).Msg("Failed to open file.")
-		return nil, err
-	}
-	defer func(fh *os.File) {
-		_ = fh.Close()
-	}(fh)
-
-	if _, err = io.Copy(fileWriter, fh); err != nil {
-		c.Logger.Debug().Err(err).Msg("Failed to copy to fileWriter")
-		return nil, err
-	}
-
-	contentType := bodyWriter.FormDataContentType()
-	_ = bodyWriter.Close()
-
-	u, err := url.Parse(c.Address)
-	if err != nil {
-		c.Logger.Debug().Err(err).Msg("Failed to parse address")
-		return nil, err
-	}
-	result := models.Command{}
-	u.Path = path.Join(u.Path, commandURI)
-	code, err := c.Handler.MakeRequest(ctx, http.MethodPut, u.String(), clients.WithPayload(bodyBuf.Bytes()), clients.WithOutput(&result), clients.WithContentType(contentType))
 	if err != nil {
 		c.Logger.Debug().Err(err).Int("code", code).Msg("Failed to get result.")
 		return nil, err
